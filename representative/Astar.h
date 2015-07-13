@@ -792,7 +792,7 @@ void Graph::Chose_moveobj(int rate)
 	 return dis;
  }
 
- void Graph::Representative(const vector<vertex> &vertices,const vector<int> &classes)
+ void Graph::Representative(const vector<vertex> &vertices, const vector<int> &classes)
  {
 	 int *randnodes = new int[vertices.size()];
 	 RandomSerices(randnodes, vertices.size());
@@ -802,20 +802,20 @@ void Graph::Chose_moveobj(int rate)
 	 //printf("%d \n", INT_MAX);
 	 //delete(rpsent);
 	 //rpsent.clear();
-	 vector<int>().swap(rpsent);
-	 rpsent.resize(vertices.size());
+	 //vector<int>().swap(rpsent);
+	 rpsent.resize(this->vertices.size());
 	 int myclass = classes[vertices[0].shapeid];
 	 int *label = new int[this->vertices.size()];
 	 for (int i = 0; i < vertices.size(); i++)
 		 label[i] = INF;
 	 //memset(label, 0x7f, sizeof(int)*this->vertices.size());
 	 //memset(rpsent, 0x7f, sizeof(int)*this->vertices.size());
-	 vector<int>().swap(rpsentnode);
+	 //vector<int>().swap(rpsentnode);//不能删除，全局代表元
 	 //rpsentnode.clear();
 	 for (int i = 1; i < vertices.size(); ++i)
 	 {
 
-		 int randnode = randnodes[i];
+		 int randnode = vertices[randnodes[i]].shapeid;//和原来的不同
 		 //printf("%d \n", label[randnode]);
 		 //printf("%d \n", INF);
 		 //break;
@@ -832,15 +832,16 @@ void Graph::Chose_moveobj(int rate)
 				 Q.Pop();
 				 for (int i = 0; i<vertices[v].edges.size(); i++)
 				 {
+					 
 					 int u = vertices[v].edges[i].id_to;
-					 if 
-					 if ((label[u]>label[v] + vertices[v].edges[i].weight) && sigma >= label[v] + vertices[v].edges[i].weight)
-					 {
-						 label[u] = label[v] + vertices[v].edges[i].weight;
-						 Q.Push(u);
-						 rpsent[u] = randnode;
+					 if (classes[u] == myclass){
+						 if ((label[u]>label[v] + vertices[v].edges[i].weight) && sigma >= label[v] + vertices[v].edges[i].weight)
+						 {
+							 label[u] = label[v] + vertices[v].edges[i].weight;
+							 Q.Push(u);
+							 rpsent[u] = randnode;
+						 }
 					 }
-
 				 }
 			 }
 
@@ -851,7 +852,15 @@ void Graph::Chose_moveobj(int rate)
 	 delete(label);
  }
 
- void Graph::Representative()
+
+ void Graph::init()
+ {
+	 int n = vertices.size();
+	 rpsent.resize(n);
+ }
+
+
+ void Graph::Representative(const vector<int> &classes)
  {
 	 int *randnodes = new int[vertices.size()];
 	 RandomSerices(randnodes, vertices.size());
@@ -861,23 +870,22 @@ void Graph::Chose_moveobj(int rate)
 	 //printf("%d \n", INT_MAX);
 	 //delete(rpsent);
 	 //rpsent.clear();
-	 vector<int>().swap(rpsent);
-	 rpsent.resize(vertices.size());
-
+	 //vector<int>().swap(rpsent);
+	 rpsent.resize(this->vertices.size());
 	 int *label = new int[this->vertices.size()];
 	 for (int i = 0; i < vertices.size(); i++)
 		 label[i] = INF;
 	 //memset(label, 0x7f, sizeof(int)*this->vertices.size());
 	 //memset(rpsent, 0x7f, sizeof(int)*this->vertices.size());
-	 vector<int>().swap(rpsentnode);
+	 //vector<int>().swap(rpsentnode);//不能删除，全局代表元
 	 //rpsentnode.clear();
 	 for (int i = 1; i < vertices.size(); ++i)
 	 {
-
-		 int randnode = randnodes[i];
+		 int randnode = vertices[randnodes[i]].shapeid;//和原来的不同
 		 //printf("%d \n", label[randnode]);
 		 //printf("%d \n", INF);
 		 //break;
+		 int myclass = classes[vertices[0].shapeid];
 		 if (label[randnode] == INF)
 		 {
 			 rpsentnode.push_back(randnode);
@@ -891,14 +899,16 @@ void Graph::Chose_moveobj(int rate)
 				 Q.Pop();
 				 for (int i = 0; i<vertices[v].edges.size(); i++)
 				 {
-					 int u = vertices[v].edges[i].id_to;
-					 if ((label[u]>label[v] + vertices[v].edges[i].weight) && sigma >= label[v] + vertices[v].edges[i].weight)
-					 {
-						 label[u] = label[v] + vertices[v].edges[i].weight;
-						 Q.Push(u);
-						 rpsent[u] = randnode;
-					 }
 
+					 int u = vertices[v].edges[i].id_to;
+					 if (classes[u] == myclass){
+						 if ((label[u]>label[v] + vertices[v].edges[i].weight) && sigma >= label[v] + vertices[v].edges[i].weight)
+						 {
+							 label[u] = label[v] + vertices[v].edges[i].weight;
+							 Q.Push(u);
+							 rpsent[u] = randnode;
+						 }
+					 }
 				 }
 			 }
 

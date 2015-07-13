@@ -73,6 +73,10 @@ public:
 	vector<int> Astarknn;//Astarknn结果
 	vector<int> Dijkknn;//dijkstraknn结果
 	vector<int> rpsentnode;//代表节点
+
+
+	void init();
+
 	void SetSigma(double sig);//设置sigma
 	double GetSigma();
 	int grid_size;//网格边长
@@ -91,6 +95,9 @@ public:
 	void Find_KNN_Dijks(int s, int k);//通过dijkstra找knn
 	void Representative();//选取代表元
 	void Representative(const vector<vertex> &vertices, const vector<int> &classes);//
+	void Representative(const vector<int> &classes);
+
+
 	int DFS(int,int *);//DFS搜索，返回连通点数量
 	int Astar(int s, int t, int *label, int *path);//A*
 	int Astar_aggressive(int s, int t, int *label, int *path);//估值系数不为1的A*

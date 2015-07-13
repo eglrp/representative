@@ -62,6 +62,7 @@ int main()
 	
 	kmeans.run(graph.vertices, graph.bound_west, graph.bound_east, graph.bound_north, graph.bound_south);
 
+
 	
 	/*int rpsnum;//代表元生成测试
 	double rpstime;
