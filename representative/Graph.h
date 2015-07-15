@@ -63,6 +63,10 @@ public:
 	double bound_south;
 	vector<vertex> vertices;//图的结点集，从1开始，0处为无效值
 	vector<int> moveobj;//移动对象
+	vector<int> classes;//分块类别信息
+	vector<degree> Degrees;//节点度排序
+
+
 	vector<vector<int>> rpsdist;//代表元之间的距离矩阵
 	hash_map<int, int> rpsmap;//代表元和距离矩阵的映射
 	hash_map<int, int> dijkmap;
@@ -93,7 +97,10 @@ public:
 	void Find_KNN_Rps(int s, int k);//通过代表元找KNN
 	void Find_KNN_Astar(int s, int k);//通过astar找knn
 	void Find_KNN_Dijks(int s, int k);//通过dijkstra找knn
+
+	void SortDegrees();//对节点度排序
 	void Representative();//选取代表元
+	void RepresentativeDegree();
 	void Representative(const vector<vertex> &vertices, const vector<int> &classes);//
 	void Representative(const vector<int> &classes);
 
@@ -407,12 +414,14 @@ void Graph::GridsGen(int size)//划分为边长为(bound_east-bound_west)/size+1的网格
 	int w = abs(bound_east - bound_west) / grid_size + 1;
 	int h = abs(bound_north - bound_south) / grid_size + 1;
 	Grids.resize(h);
+	classes.resize(vertices.size());
 	for (int i = 0; i<Grids.size(); i++)
 		Grids[i].resize(w);
 	for (int i = 1; i<vertices.size(); i++)
 	{
 		int x = (vertices[i].x - bound_west) / grid_size;
 		int y = (vertices[i].y - bound_south) / grid_size;
+		classes[i] = y*w + x;
 		Grids[y][x].push_back(i);
 	}
 

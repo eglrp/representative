@@ -510,63 +510,7 @@ void RandomSerices(int * a, int num)
 
 
 
-void Graph::Representative()
-{
-	int *randnodes = new int[vertices.size()];
-	RandomSerices(randnodes, vertices.size());
-	//for (int i = 0; i < 100; i++)
-	//	printf("%d ", randnodes[i]);
-	//printf("%d \n", 0x7f);
-	//printf("%d \n", INT_MAX);
-	//delete(rpsent);
-	//rpsent.clear();
-	vector<int>().swap(rpsent);
-	rpsent.resize(vertices.size());
-	
-	int *label = new int[this->vertices.size()];
-	for (int i = 0; i < vertices.size(); i++)
-		label[i] = INF;
-	//memset(label, 0x7f, sizeof(int)*this->vertices.size());
-	//memset(rpsent, 0x7f, sizeof(int)*this->vertices.size());
-	vector<int>().swap(rpsentnode);
-	//rpsentnode.clear();
-	for (int i = 1; i < vertices.size();++i)
-	{
-		
-		int randnode = randnodes[i];
-		//printf("%d \n", label[randnode]);
-		//printf("%d \n", INF);
-		//break;
-		if (label[randnode] == INF)
-		{
-			rpsentnode.push_back(randnode);
-			Priority_Queue Q(this->vertices.size() / 100, label, this->vertices.size());
-			rpsent[randnode] = randnode;
-			Q.Push(randnode);
-			label[randnode] = 0;
-			while (!Q.isEmpty())
-			{
-				int v = Q.Top();
-				Q.Pop();
-				for (int i = 0; i<vertices[v].edges.size(); i++)
-				{
-					int u = vertices[v].edges[i].id_to;
-					if ((label[u]>label[v] + vertices[v].edges[i].weight) && sigma >= label[v] + vertices[v].edges[i].weight)
-					{
-						label[u] = label[v] + vertices[v].edges[i].weight;
-						Q.Push(u);
-						rpsent[u] = randnode;
-					}
-						
-				}
-			}
 
-		}
-	}
-	//cout << "rpschose" << endl;
-	delete(randnodes);
-	delete(label);
-}
 
 void Graph::Chose_moveobj(int rate)
 {
@@ -791,6 +735,136 @@ void Graph::Chose_moveobj(int rate)
 
 	 return dis;
  }
+ 
+ void Graph::SortDegrees()
+ {
+	 int n = vertices.size();
+	 Degrees.resize(n);
+	 for (int i = 0; i < n; i++)
+	 {
+		 Degrees[i].shapeid = i;
+		 Degrees[i].degrees = vertices[i].edges.size();
+	 }
+	 sort(Degrees.begin(), Degrees.end());
+	 for (int i = 0; i < 100; i++)
+		 cout << Degrees[i].shapeid << " " << Degrees[i].degrees << endl;
+ }
+
+ void Graph::Representative()
+ {
+	 int *randnodes = new int[vertices.size()];
+	 RandomSerices(randnodes, vertices.size());
+	 //for (int i = 0; i < 100; i++)
+	 //	printf("%d ", randnodes[i]);
+	 //printf("%d \n", 0x7f);
+	 //printf("%d \n", INT_MAX);
+	 //delete(rpsent);
+	 //rpsent.clear();
+	 vector<int>().swap(rpsent);
+	 rpsent.resize(vertices.size());
+
+	 int *label = new int[this->vertices.size()];
+	 for (int i = 0; i < vertices.size(); i++)
+		 label[i] = INF;
+	 //memset(label, 0x7f, sizeof(int)*this->vertices.size());
+	 //memset(rpsent, 0x7f, sizeof(int)*this->vertices.size());
+	 vector<int>().swap(rpsentnode);
+	 //rpsentnode.clear();
+	 for (int i = 1; i < vertices.size(); ++i)
+	 {
+
+		 int randnode = randnodes[i];
+		 //printf("%d \n", label[randnode]);
+		 //printf("%d \n", INF);
+		 //break;
+		 if (label[randnode] == INF)
+		 {
+			 rpsentnode.push_back(randnode);
+			 Priority_Queue Q(this->vertices.size() / 100, label, this->vertices.size());
+			 rpsent[randnode] = randnode;
+			 label[randnode] = 0;
+			 Q.Push(randnode);
+			 while (!Q.isEmpty())
+			 {
+				 int v = Q.Top();
+				 Q.Pop();
+				 for (int i = 0; i<vertices[v].edges.size(); i++)
+				 {
+					 int u = vertices[v].edges[i].id_to;
+					 if ((label[u]>label[v] + vertices[v].edges[i].weight) && sigma >= label[v] + vertices[v].edges[i].weight)
+					 {
+						 label[u] = label[v] + vertices[v].edges[i].weight;
+						 Q.Push(u);
+						 rpsent[u] = randnode;
+					 }
+
+				 }
+			 }
+
+		 }
+	 }
+	 //cout << "rpschose" << endl;
+	 delete(randnodes);
+	 delete(label);
+ }
+
+ void Graph::RepresentativeDegree()
+ {
+	 int *randnodes = new int[vertices.size()];
+	 RandomSerices(randnodes, vertices.size());
+	 //for (int i = 0; i < 100; i++)
+	 //	printf("%d ", randnodes[i]);
+	 //printf("%d \n", 0x7f);
+	 //printf("%d \n", INT_MAX);
+	 //delete(rpsent);
+	 //rpsent.clear();
+	 vector<int>().swap(rpsent);
+	 rpsent.resize(vertices.size());
+	// SortDegrees();
+	 int *label = new int[this->vertices.size()];
+	 for (int i = 0; i < vertices.size(); i++)
+		 label[i] = INF;
+	 //memset(label, 0x7f, sizeof(int)*this->vertices.size());
+	 //memset(rpsent, 0x7f, sizeof(int)*this->vertices.size());
+	 vector<int>().swap(rpsentnode);
+	 //rpsentnode.clear();
+	 for (int i = 1; i < vertices.size(); ++i)
+	 {
+
+		 int randnode = Degrees[i].shapeid;
+		 //printf("%d \n", label[randnode]);
+		 //printf("%d \n", INF);
+		 //break;
+		 if (label[randnode] == INF)
+		 {
+			 rpsentnode.push_back(randnode);
+			 Priority_Queue Q(this->vertices.size() / 100, label, this->vertices.size());
+			 rpsent[randnode] = randnode;
+			 label[randnode] = 0;
+			 Q.Push(randnode);
+			 while (!Q.isEmpty())
+			 {
+				 int v = Q.Top();
+				 Q.Pop();
+				 for (int i = 0; i<vertices[v].edges.size(); i++)
+				 {
+					 int u = vertices[v].edges[i].id_to;
+					 if ((label[u]>label[v] + vertices[v].edges[i].weight) && sigma >= label[v] + vertices[v].edges[i].weight)
+					 {
+						 label[u] = label[v] + vertices[v].edges[i].weight;
+						 Q.Push(u);
+						 rpsent[u] = randnode;
+					 }
+
+				 }
+			 }
+
+		 }
+	 }
+	 //cout << "rpschose" << endl;
+	 delete(randnodes);
+	 delete(label);
+ }
 
  void Graph::Representative(const vector<vertex> &vertices, const vector<int> &classes)
  {
@@ -857,6 +931,7 @@ void Graph::Chose_moveobj(int rate)
  {
 	 int n = vertices.size();
 	 rpsent.resize(n);
+	 vector<int>().swap(rpsentnode);
  }
 
 
@@ -870,27 +945,27 @@ void Graph::Chose_moveobj(int rate)
 	 //printf("%d \n", INT_MAX);
 	 //delete(rpsent);
 	 //rpsent.clear();
-	 //vector<int>().swap(rpsent);
+	 vector<int>().swap(rpsent);
 	 rpsent.resize(this->vertices.size());
 	 int *label = new int[this->vertices.size()];
 	 for (int i = 0; i < vertices.size(); i++)
 		 label[i] = INF;
 	 //memset(label, 0x7f, sizeof(int)*this->vertices.size());
 	 //memset(rpsent, 0x7f, sizeof(int)*this->vertices.size());
-	 //vector<int>().swap(rpsentnode);//不能删除，全局代表元
+	 vector<int>().swap(rpsentnode);
 	 //rpsentnode.clear();
 	 for (int i = 1; i < vertices.size(); ++i)
 	 {
-		 int randnode = vertices[randnodes[i]].shapeid;//和原来的不同
+		 int randnode = randnodes[i];//和原来的不同
 		 //printf("%d \n", label[randnode]);
 		 //printf("%d \n", INF);
 		 //break;
-		 int myclass = classes[vertices[0].shapeid];
+		 int myclass = classes[randnode];
 		 if (label[randnode] == INF)
 		 {
 			 rpsentnode.push_back(randnode);
-			 Priority_Queue Q(this->vertices.size() / 100, label, this->vertices.size());
 			 rpsent[randnode] = randnode;
+			 Priority_Queue Q(this->vertices.size() / 100, label, this->vertices.size());
 			 Q.Push(randnode);
 			 label[randnode] = 0;
 			 while (!Q.isEmpty())
@@ -899,7 +974,6 @@ void Graph::Chose_moveobj(int rate)
 				 Q.Pop();
 				 for (int i = 0; i<vertices[v].edges.size(); i++)
 				 {
-
 					 int u = vertices[v].edges[i].id_to;
 					 if (classes[u] == myclass){
 						 if ((label[u]>label[v] + vertices[v].edges[i].weight) && sigma >= label[v] + vertices[v].edges[i].weight)

@@ -6,8 +6,8 @@ void KMeans::initCenter(double xLeft, double xRight, double yUp, double yDown) {
 	uniform_real_distribution<double> u(0, 1);
 	double xSize = (xRight - xLeft);
 	double ySize = (yUp - yDown);
-	cout << "xleft" <<fixed<<xLeft << "xright" << xRight << "yup" << yUp << "ydown" << yDown << endl;
-	cout << "k" << k << "mu" << mu << endl;
+	//cout << "xleft" <<fixed<<xLeft << "xright" << xRight << "yup" << yUp << "ydown" << yDown << endl;
+	//cout << "k" << k << "mu" << mu << endl;
 	for (int i = 0; i < k; i++){
 		double x = xLeft + u(e)* xSize;
 		double y = yDown + u(e)* ySize;
@@ -20,7 +20,7 @@ void KMeans::initCenter(double xLeft, double xRight, double yUp, double yDown) {
 }
 int times = 0;
 void KMeans::classify(const vector<vertex> &vertices) {
-	cout << "调用" << ++times << endl;
+	//cout << "调用" << ++times << endl;
 	int n = vertices.size();
 	for (int i = 1; i != n; i++)
 	{
@@ -128,7 +128,7 @@ double KMeans::getSati(const vector<vertex> &vertices, int len) {
 
 double KMeans::run(const vector<vertex> &vertices, double xLeft, double xRight, double yUp, double yDown) {
 
-	cout <<"k" <<k <<"mu" <<mu << endl;
+	//cout <<"k" <<k <<"mu" <<mu << endl;
 	int n = vertices.size();
 	classes.resize(n);
 	initCenter(xLeft, xRight, yUp, yDown);
@@ -137,9 +137,9 @@ double KMeans::run(const vector<vertex> &vertices, double xLeft, double xRight, 
 		//    System.out.println("again") ;
 		classify(vertices);
 	}
-	for (int i = 0; i < k; i++)
-		cout << "x:" << centers[i].x << " y:" << centers[i].y << endl;
-	double ss = getSati(vertices, 2);
-	printf("加权方差：%f", ss);
-	return ss;
+	//for (int i = 0; i < k; i++)
+	//	cout << "x:" << centers[i].x << " y:" << centers[i].y << endl;
+	//double ss = getSati(vertices, 2);
+	//printf("加权方差：%f", ss);
+	return 0;
 }

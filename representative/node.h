@@ -13,6 +13,18 @@ struct center
 	double y;
 };
 
+struct degree
+{
+	int shapeid;
+	int degrees;
+	bool operator< (degree a)
+	{
+		if (degrees > a.degrees)
+			return true;
+		else return false;
+	}
+};
+
 struct edge//边
 {
 	int id_to;//指向的结点

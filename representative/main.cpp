@@ -9,6 +9,69 @@
 #include"KMeans.h"
 int spy=0;
 
+
+void representiveNumCompareKmeans(Graph &graph)
+{
+
+	for (int i = 0; i < 5; i++)
+	{
+		
+		for (int j = 0; j < 5; j++)
+		{
+			int num1=0, num2=0;
+			graph.SetSigma(5000+j*5000);
+			for (int k = 0; k < 10; k++)
+			{
+				graph.Representative();
+				num1 += graph.rpsentnode.size();
+				//printf("random representative node num: %d\n", graph.rpsentnode.size());
+				KMeans kmeans(100 + i * 100, 10);
+				kmeans.run(graph.vertices, graph.bound_west, graph.bound_east, graph.bound_north, graph.bound_south);
+
+				graph.Representative(kmeans.classes);
+				
+				//printf("kmeans representative  node num: %d\n", graph.rpsentnode.size());
+				num2 += graph.rpsentnode.size();
+			}
+			cout << "sigma:"<<5000+j*5000<<"  kmeans参数：" << 100 * i + 100 << endl;
+			printf("random representative node num: %f\n", num1/10.0);
+			printf("kmeans representative node num: %f\n", num2/10.0);
+		}
+
+	}
+
+
+}
+
+void representiveNumCompareGrids(Graph &graph)
+{
+
+	//for (int i = 0; i < 5; i++)
+	//{
+
+		for (int j = 0; j < 5; j++)
+		{
+			int num1 = 0, num2 = 0;
+			graph.SetSigma(5000+j*5000);
+			graph.GridsGen(100);
+			for (int k = 0; k < 10; k++)
+			{
+				graph.Representative();
+				num1 += graph.rpsentnode.size();
+				//printf("random representative node num: %d\n", graph.rpsentnode.size());
+				//graph.Representative(graph.classes);
+				graph.RepresentativeDegree();
+				//printf("grid representative  node num: %d\n", graph.rpsentnode.size());
+				num2 += graph.rpsentnode.size();
+			}
+			cout << "sigma:" << 5000 + j * 5000 << endl;//<< "  网格参数：" << 10000 + 10000 * i << endl;
+			printf("random representative node num: %f\n", num1 / 10.0);
+			printf("Grids representative node num: %f\n", num2 / 10.0);
+		}
+
+	//}
+}
+
 int main()
 {
 	
@@ -31,11 +94,11 @@ int main()
 	//graph.LoadGraph_tiger("E:\\GIS\\CT.tmp");
 
 	//修正gr中的数据误差
-	//for(int i=1;i<graph.vertices.size();i++)
-	//	for(int j=0;j<graph.vertices[i].edges.size();j++)
-	//		if(graph.Euclidean_Dist(i,graph.vertices[i].edges[j].id_to)>graph.vertices[i].edges[j].weight)
-	//			//printf("Wrong graph data %d %d\n",graph.Euclidean_Dist(i,graph.vertices[i].edges[j].id_to),graph.vertices[i].edges[j].weight);
-	//			graph.vertices[i].edges[j].weight=graph.Euclidean_Dist(i,graph.vertices[i].edges[j].id_to);
+	for(int i=1;i<graph.vertices.size();i++)
+		for(int j=0;j<graph.vertices[i].edges.size();j++)
+			if(graph.Euclidean_Dist(i,graph.vertices[i].edges[j].id_to)>graph.vertices[i].edges[j].weight)
+				//printf("Wrong graph data %d %d\n",graph.Euclidean_Dist(i,graph.vertices[i].edges[j].id_to),graph.vertices[i].edges[j].weight);
+				graph.vertices[i].edges[j].weight=graph.Euclidean_Dist(i,graph.vertices[i].edges[j].id_to);
 	
 	
 	//int *flag = new int[graph.vertices.size()];
@@ -53,17 +116,14 @@ int main()
 	//delete[] flag;
 	double totaltime = 0, totaltime1=0,totaltime2 = 0, totaltime3 = 0;
 	graph.Reverse();
-	for (int i = 0; i < 100; i++)
-		cout << graph.vertices[i].shapeid << " ";
+
 	graph.GridsGen(100);
 	cout << sizeof(int) << endl;
 	cout << graph.bound_north << " " << graph.bound_south << " " << graph.bound_east;
-	KMeans kmeans(100,100);
-	
-	kmeans.run(graph.vertices, graph.bound_west, graph.bound_east, graph.bound_north, graph.bound_south);
+	graph.SortDegrees();
+	//representiveNumCompareKmeans(graph);
 
-
-	
+	representiveNumCompareGrids(graph);
 	/*int rpsnum;//代表元生成测试
 	double rpstime;
 	for (int i = 0; i < 12; i++)
