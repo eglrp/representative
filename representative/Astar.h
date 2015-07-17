@@ -746,8 +746,8 @@ void Graph::Chose_moveobj(int rate)
 		 Degrees[i].degrees = vertices[i].edges.size();
 	 }
 	 sort(Degrees.begin(), Degrees.end());
-	 for (int i = 0; i < 100; i++)
-		 cout << Degrees[i].shapeid << " " << Degrees[i].degrees << endl;
+	 //for (int i = 0; i < 100; i++)
+		// cout << Degrees[i].shapeid << " " << Degrees[i].degrees << endl;
  }
 
  void Graph::Representative()

@@ -123,7 +123,7 @@ int main()
 	graph.SortDegrees();
 	//representiveNumCompareKmeans(graph);
 
-	representiveNumCompareGrids(graph);
+	//representiveNumCompareGrids(graph);
 	/*int rpsnum;//代表元生成测试
 	double rpstime;
 	for (int i = 0; i < 12; i++)
@@ -143,12 +143,12 @@ int main()
 		printf("representative  node num: %f,sigma: %f,time:%fus\n", rpsnum/100.0, graph.GetSigma(),rpstime/100);
 	}
 	*/
-	/*double precom1, precom2, precom3;//测试不同误差上限的运行时间
+	double precom1, precom2, precom3;//测试不同误差上限的运行时间
 	for (int i = 0; i < 4; i++)
 	{
 		precom1 = 0;
 		precom2 = 0;
-		graph.SetSigma(10000 + i * 5000);
+		graph.SetSigma(30000 + i * 5000);
 
 		QueryPerformanceCounter(&begin);
 		graph.Representative();
@@ -160,20 +160,20 @@ int main()
 		graph.Comput_Dist_Rps();
 		QueryPerformanceCounter(&end);
 		precom2 = secondsPerTick * (end.QuadPart - begin.QuadPart);
-		printf("representative  node num: %f,sigma: %f,time:%fus\n", graph.rpsentnode.size(), graph.GetSigma(), precom1);
+		printf("representative  node num: %d,sigma: %f,time:%fus\n", graph.rpsentnode.size(), graph.GetSigma(), precom1);
 		printf("precompute cost time:%fus\n", precom2);
 		printf("all precompute cost time:%fus\n", precom1 + precom2);
 	}
-	*/
+	
 
 	/*double precom1, precom2, precom3;//测试预处理时间
 	for (int i = 0; i < 4; i++)
 	{
 		precom1 = precom2 = 0;
-		graph.SetSigma(5000 + i * 5000);
+		graph.SetSigma(15000 + i * 5000);
 
 		QueryPerformanceCounter(&begin);
-		graph.Representative();
+		graph.RepresentativeDegree();
 		QueryPerformanceCounter(&end);
 		precom1 = secondsPerTick * (end.QuadPart - begin.QuadPart);
 		printf("representative  node num: %d,sigma: %f,time:%fus\n", graph.rpsentnode.size(), graph.GetSigma(), precom1);
@@ -186,8 +186,8 @@ int main()
 
 		printf("precompute cost time:%fus\n", precom2);
 		printf("all precompute cost time:%fus\n", precom1 + precom2);
-	}
-	*/
+	}*/
+	
 
 	
 	/*graph.SetSigma(10000);

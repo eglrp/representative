@@ -9,6 +9,7 @@ using namespace cimg_library;
 #include <limits>
 #include<hash_map>
 #include"node.h"
+#include<omp.h>
 //#include <algorithm>
 using namespace std;
 
