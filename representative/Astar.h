@@ -115,6 +115,52 @@ void Graph::Dijkstra_ALL(int s, hash_map<int, int> &goal,vector<int> &dist, int 
 	
 }
 
+void Graph::Dijkstra_ALL(int s,int *label, int *path)
+{
+	int *flag = new int[this->vertices.size()];//搜索状态的标记
+	memset(flag, 0, sizeof(int)*this->vertices.size());
+
+	Priority_Queue Q(this->vertices.size() / 100, label, this->vertices.size());
+
+	int id = s;
+	path[s] = s;
+	label[s] = 0;
+
+	//flag[s]=FINISHED;
+	Q.Push(id);
+
+	while (!Q.isEmpty())//忽略了没有路径的情况
+	{
+		id = Q.Top();
+		Q.Pop();
+		for (int i = 0; i<vertices[id].edges.size(); i++)
+		{
+			int id_to = vertices[id].edges[i].id_to;
+			switch (flag[id_to])
+			{
+			case NEVER://从未搜索过
+				label[id_to] = label[id] + vertices[id].edges[i].weight;
+				Q.Push(id_to);
+				flag[id_to] = EVER;
+				path[id_to] = id;
+				break;
+			case EVER://曾经搜索过
+				if (label[id] + vertices[id].edges[i].weight < label[id_to])
+				{
+					label[id_to] = label[id] + vertices[id].edges[i].weight;
+					Q.Adjust(id_to);
+					path[id_to] = id;
+				}
+				break;
+			}
+		}
+		flag[id] = FINISHED;
+
+	}
+	delete(flag);
+
+}
+
 inline int Graph::Euclidean_Dist(int a, int b)
 {
 	return (int)sqrt((vertices[a].x - vertices[b].x)*(vertices[a].x - vertices[b].x) +
@@ -572,6 +618,69 @@ void Graph::Chose_moveobj(int rate)
 	delete(label);
 }
 
+
+ void Graph::Comput_Dist_Rps_OMP()
+ {
+	 //cout << "start comput_dist_rps" << endl;
+	 int n = rpsentnode.size();
+	 //for (int i = 0; i < 100; i++)
+	 //	cout << rpsentnode[i] << " ";
+
+	 //rpsdist.clear();
+	 vector<vector<int>>().swap(rpsdist);
+	 rpsdist.resize(n);
+	 for (int i = 0; i != n; i++)
+	 {
+		 rpsdist[i].resize(n);
+	 }
+
+	 rpsmap.clear();
+	 for (int i = 0; i < n; i++)
+	 {
+		 int s = rpsentnode[i];
+		 rpsmap[s] = i;
+	 }
+	 /*LARGE_INTEGER begin, end, lv;
+	 double secondsPerTick;
+	 QueryPerformanceFrequency(&lv);
+	 secondsPerTick = 1000000.0 / lv.QuadPart;*/
+#pragma omp parallel for
+	 for (int i = 0; i < n; i++)
+	 {
+
+		 int *path = new int[vertices.size()];
+		 int *label = new int[vertices.size()];
+		 int s = rpsentnode[i];
+		 //QueryPerformanceCounter(&begin);
+		 Dijkstra_ALL(s, rpsmap, rpsdist[i], label, path);
+		 delete(path);
+		 delete(label);
+		 //QueryPerformanceCounter(&end);
+		 //printf("time:%f\n", secondsPerTick * (end.QuadPart - begin.QuadPart));
+	 }
+	 //cout << "end comput dist rps" << endl;
+	 
+ }
+
+ void Graph::Comput_Dist_by_Rps(int s,int *label)
+ {
+	 int n = vertices.size();
+	 int rps1 = rpsent[s];
+	 int maps = rpsmap[rps1];
+	 label[s] = 0;
+	 for (int i = 1; i < n; i++)
+	 {
+
+		 if (i != s)
+		 {
+			 int rpst = rpsent[i];
+			 int mapt = rpsmap[rpst];
+			 label[i] = rpsdist[maps][mapt];
+		 }
+
+	 }
+ }
+
  void Graph::Find_KNN_Rps(int s,int k)
  {
 	 //cout << "start find knn rps" << endl;
@@ -991,4 +1100,43 @@ void Graph::Chose_moveobj(int rate)
 	 //cout << "rpschose" << endl;
 	 delete(randnodes);
 	 delete(label);
+ }
+
+
+
+ void Graph::Distance_Test()
+ {
+	 for (int i = 0; i < 10; i++)
+	 {
+		 int n = this->vertices.size();
+		 int randnum = exRand() % (vertices.size() - 1) + 1;
+		 int *label = new int[n];
+		 int *label1 = new int[n];
+		 int *path = new int[n];
+		 cout <<"s:"<< randnum << endl;
+		 Dijkstra_ALL(randnum, label, path);
+		 Comput_Dist_by_Rps(randnum, label1);
+		 unsigned int dismax = 0, dismin = 10000000000, disbar = 0;
+		 for (int i = 1; i < 100; i++)
+			 cout << label[i] << " " << label1[i] << endl;
+		 for (int i = 1; i < n; i++)
+		 {
+			 if (i != randnum)
+			 {
+
+				 unsigned int tmp = abs(label1[i] - label[i]);
+				 if (tmp == 0)
+					 cout << i << endl;
+				 if (dismax < tmp)
+					 dismax = tmp;
+				 if (dismin>tmp)
+					 dismin = tmp;
+				 disbar += tmp;
+			 }
+		 }
+		 cout << "最大误差：" << dismax << "最小误差：" << dismin << "平均误差" << disbar/(n - 2) << endl;
+		 delete[] label;
+		 delete[] label1;
+		 delete[] path;
+	 }
  }

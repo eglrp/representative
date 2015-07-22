@@ -72,6 +72,91 @@ void representiveNumCompareGrids(Graph &graph)
 	//}
 }
 
+
+void Distance_Test(Graph &graph)
+{
+	LARGE_INTEGER begin, end, lv;
+	double secondsPerTick;
+	QueryPerformanceFrequency(&lv);
+	secondsPerTick = 1000000.0 / lv.QuadPart;
+	srand(time(0));
+	double precom1, precom2, precom3;//测试不同误差上限的运行时间
+	
+		precom1 = 0;
+		precom2 = 0;
+		graph.SetSigma(5000);
+
+		QueryPerformanceCounter(&begin);
+		graph.RepresentativeDegree();
+		QueryPerformanceCounter(&end);
+		precom1 = secondsPerTick * (end.QuadPart - begin.QuadPart);
+		printf("representative  node num: %d,sigma: %f,cost time:%fus\n", graph.rpsentnode.size(), graph.GetSigma(), precom1);
+
+
+		QueryPerformanceCounter(&begin);
+		graph.Comput_Dist_Rps();
+		QueryPerformanceCounter(&end);
+		precom2 = secondsPerTick * (end.QuadPart - begin.QuadPart);
+		//printf("representative  node num: %d,sigma: %f,time:%fus\n", graph.rpsentnode.size(), graph.GetSigma(), precom1);
+		printf("precompute cost time:%fus\n", precom2);
+		printf("all precompute cost time:%fus\n", precom1 + precom2);
+		QueryPerformanceCounter(&begin);
+		graph.Distance_Test();
+		QueryPerformanceCounter(&end);
+		precom3 = secondsPerTick * (end.QuadPart - begin.QuadPart);
+		printf("distance test cost time:%fus\n", precom3);
+}
+
+void Parallel_Test(Graph &graph)
+{
+	LARGE_INTEGER begin, end, lv;
+	double secondsPerTick;
+	QueryPerformanceFrequency(&lv);
+	secondsPerTick = 1000000.0 / lv.QuadPart;
+	srand(time(0));
+	double precom1, precom2, precom3;//测试不同误差上限的运行时间
+
+	precom1 = 0;
+	precom2 = 0;
+	graph.SetSigma(5000);
+
+	QueryPerformanceCounter(&begin);
+	graph.RepresentativeDegree();
+	QueryPerformanceCounter(&end);
+	precom1 = secondsPerTick * (end.QuadPart - begin.QuadPart);
+	printf("representative  node num: %d,sigma: %f,cost time:%fus\n", graph.rpsentnode.size(), graph.GetSigma(), precom1);
+
+	/*QueryPerformanceCounter(&begin);
+	graph.Comput_Dist_Rps();
+	QueryPerformanceCounter(&end);
+
+	precom2 = secondsPerTick * (end.QuadPart - begin.QuadPart);
+	//printf("representative  node num: %d,sigma: %f,time:%fus\n", graph.rpsentnode.size(), graph.GetSigma(), precom1);
+	printf("representative distance compute cost time::%fus\n", precom2);
+
+	vector<vector<int>> rpsdist;
+	rpsdist = graph.rpsdist;*/
+
+	QueryPerformanceCounter(&begin);
+	graph.Comput_Dist_Rps_OMP();
+	QueryPerformanceCounter(&end);
+
+	precom3 = secondsPerTick * (end.QuadPart - begin.QuadPart);
+	printf("parallel distance compute cost time:%fus\n", precom3);
+
+	/*int n = rpsdist.size();
+	int num = 0;
+	for (int i = 1; i < n;i++)
+	for (int j = 1; j < n; j++)
+	{
+		if (rpsdist[i][j] != graph.rpsdist[i][j])
+		{
+			printf("error i:%d j: %d ",i,j);
+			num++;
+		}
+	}
+	cout << num << endl;*/
+}
 int main()
 {
 	
@@ -118,9 +203,12 @@ int main()
 	graph.Reverse();
 
 	graph.GridsGen(100);
-	cout << sizeof(int) << endl;
-	cout << graph.bound_north << " " << graph.bound_south << " " << graph.bound_east;
+	//cout << sizeof(int) << endl;
+	//cout << graph.bound_north << " " << graph.bound_south << " " << graph.bound_east;
 	graph.SortDegrees();
+	Parallel_Test(graph);
+
+	//Distance_Test(graph);
 	//representiveNumCompareKmeans(graph);
 
 	//representiveNumCompareGrids(graph);
@@ -143,7 +231,7 @@ int main()
 		printf("representative  node num: %f,sigma: %f,time:%fus\n", rpsnum/100.0, graph.GetSigma(),rpstime/100);
 	}
 	*/
-	double precom1, precom2, precom3;//测试不同误差上限的运行时间
+	/*double precom1, precom2, precom3;//测试不同误差上限的运行时间
 	for (int i = 0; i < 4; i++)
 	{
 		precom1 = 0;
@@ -163,7 +251,7 @@ int main()
 		printf("representative  node num: %d,sigma: %f,time:%fus\n", graph.rpsentnode.size(), graph.GetSigma(), precom1);
 		printf("precompute cost time:%fus\n", precom2);
 		printf("all precompute cost time:%fus\n", precom1 + precom2);
-	}
+	}*/
 	
 
 	/*double precom1, precom2, precom3;//测试预处理时间

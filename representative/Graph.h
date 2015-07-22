@@ -91,10 +91,13 @@ public:
 	void GridsGen(int size);//划分为边长为size的网格
 	void Convert();//消除约束
 	int Dijkstra(int s, int t, int *label, int *path);
-	void Dijkstra_ALL(int s, hash_map<int, int> &goal, vector<int> &dist, int *label, int *path);//全源最短路径dijkstra
+	void Dijkstra_ALL(int s, hash_map<int, int> &goal, vector<int> &dist, int *label, int *path);//全源最短路径dijkstra,计算代表元用
+	void Dijkstra_ALL(int s, int *label, int *path);//全源最短路径距离
 	void Comput_Dist_Rps();//计算代表元之间的距离
 	void Chose_moveobj(int rate);//按概率选取移动对象
-	
+	void Comput_Dist_by_Rps(int s, int *label);
+	void Comput_Dist_Rps_OMP();
+
 	void Find_KNN_Rps(int s, int k);//通过代表元找KNN
 	void Find_KNN_Astar(int s, int k);//通过astar找knn
 	void Find_KNN_Dijks(int s, int k);//通过dijkstra找knn
@@ -105,6 +108,7 @@ public:
 	void Representative(const vector<vertex> &vertices, const vector<int> &classes);//
 	void Representative(const vector<int> &classes);
 
+	void Distance_Test();
 
 	int DFS(int,int *);//DFS搜索，返回连通点数量
 	int Astar(int s, int t, int *label, int *path);//A*
