@@ -328,6 +328,7 @@ void Graph::LoadGraph_gr(char *file_gr, char *file_co)//读入图数据
 	//memset(nodes,0,sizeof(vertex)*size);
 
 	int from, to, weight;
+	int max = 0;
 	edge a;
 	for (int i = 0; i<n_arc; i++)
 	{
@@ -335,14 +336,16 @@ void Graph::LoadGraph_gr(char *file_gr, char *file_co)//读入图数据
 		c = fgetc(fp);
 		fscanf(fp, "%d%d%d", &from, &a.id_to, &a.weight);
 		sum_arc += a.weight;
-
+		if (max < a.weight)
+			max = a.weight;
 		//nodes[from].id=from;
 		vertices[from].edges.push_back(a);
 		//nodes[from].degree++;
 	}
 	fclose(fp);
+	printf("max weight %d\n", max);
 	int cc[30] = { 0 };
-	int max = 0;
+	max = 0;
 	for (int i = 1; i<size; i++)
 	{
 		if (vertices[i].edges.size()>max)

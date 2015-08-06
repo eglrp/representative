@@ -29,7 +29,7 @@ struct edge//边
 {
 	int id_to;//指向的结点
 	//zsy change int to double
-	double weight;//边权值
+	int weight;//边权值
 	double max_speed;//最大通行速度
 	int highway;//道路分类标记
 };

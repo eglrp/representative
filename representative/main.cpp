@@ -10,16 +10,20 @@
 int spy=0;
 
 
+
+
+
+
 void representiveNumCompareKmeans(Graph &graph)
 {
 
 	for (int i = 0; i < 5; i++)
 	{
 		
-		for (int j = 0; j < 5; j++)
+		for (int j = 0; j < 10; j++)
 		{
 			int num1=0, num2=0;
-			graph.SetSigma(5000+j*5000);
+			graph.SetSigma(4000+j*2000);
 			for (int k = 0; k < 10; k++)
 			{
 				graph.Representative();
@@ -43,17 +47,58 @@ void representiveNumCompareKmeans(Graph &graph)
 
 }
 
-void representiveNumCompareGrids(Graph &graph)
+
+/*void TimeCompareDegree(Graph &graph)
+{
+	timeval start;
+	timeval end;
+	unsigned  long diff, diff2;
+	for (int i = 0; i < 5; i++)
+	{
+		
+		graph.SetSigma(5000+i*5000);
+
+		gettimeofday(&start, NULL);
+		graph.Representative();
+		gettimeofday(&end, NULL);
+
+		diff = 1000000 * (end.tv_sec - start.tv_sec) + end.tv_usec - start.tv_usec;
+		printf("random represent node num: %d,sigma: %f,cost time:%ldus\n", graph.rpsentnode.size(), graph.GetSigma(), diff);
+		gettimeofday(&start, NULL);
+		graph.Comput_Dist_Rps();
+		gettimeofday(&end, NULL);
+
+		diff2 = 1000000 * (end.tv_sec - start.tv_sec) + end.tv_usec - start.tv_usec;
+		printf("random distance compute cost time:%ldus\n", diff);
+		printf("all pre-com random  cost time:%ldus\n", diff+diff2);
+
+		gettimeofday(&start, NULL);
+		graph.RepresentativeDegree();
+		gettimeofday(&end, NULL);
+
+		diff = 1000000 * (end.tv_sec - start.tv_sec) + end.tv_usec - start.tv_usec;
+		printf("degree represent  node num: %d,sigma: %f,cost time:%ldus\n", graph.rpsentnode.size(), graph.GetSigma(), diff);
+		gettimeofday(&start, NULL);
+		graph.Comput_Dist_Rps();
+		gettimeofday(&end, NULL);
+
+		diff2 = 1000000 * (end.tv_sec - start.tv_sec) + end.tv_usec - start.tv_usec;
+		printf("parallel distance compute cost time:%ldus\n", diff);
+		printf("all pre-com degree  cost time:%ldus\n", diff + diff2);
+	}
+}*/
+
+
+void representiveNumCompareDegree(Graph &graph)
 {
 
 	//for (int i = 0; i < 5; i++)
 	//{
 
-		for (int j = 0; j < 5; j++)
+		for (int j = 0; j < 10; j++)
 		{
 			int num1 = 0, num2 = 0;
-			graph.SetSigma(5000+j*5000);
-			graph.GridsGen(100);
+			graph.SetSigma(4000+j*2000);
 			for (int k = 0; k < 10; k++)
 			{
 				graph.Representative();
@@ -64,9 +109,9 @@ void representiveNumCompareGrids(Graph &graph)
 				//printf("grid representative  node num: %d\n", graph.rpsentnode.size());
 				num2 += graph.rpsentnode.size();
 			}
-			cout << "sigma:" << 5000 + j * 5000 << endl;//<< "  网格参数：" << 10000 + 10000 * i << endl;
+			cout << "sigma:" << graph.GetSigma() << endl;//<< "  网格参数：" << 10000 + 10000 * i << endl;
 			printf("random representative node num: %f\n", num1 / 10.0);
-			printf("Grids representative node num: %f\n", num2 / 10.0);
+			printf("degree representative node num: %f\n", num2 / 10.0);
 		}
 
 	//}
@@ -179,13 +224,13 @@ int main()
 	//graph.LoadGraph_tiger("E:\\GIS\\CT.tmp");
 
 	//修正gr中的数据误差
-	for(int i=1;i<graph.vertices.size();i++)
+	/*for(int i=1;i<graph.vertices.size();i++)
 		for(int j=0;j<graph.vertices[i].edges.size();j++)
 			if(graph.Euclidean_Dist(i,graph.vertices[i].edges[j].id_to)>graph.vertices[i].edges[j].weight)
 				//printf("Wrong graph data %d %d\n",graph.Euclidean_Dist(i,graph.vertices[i].edges[j].id_to),graph.vertices[i].edges[j].weight);
 				graph.vertices[i].edges[j].weight=graph.Euclidean_Dist(i,graph.vertices[i].edges[j].id_to);
 	
-	
+	*/
 	//int *flag = new int[graph.vertices.size()];
 	//int c = graph.DFS(1,flag);
 	//cout<<"dfs count "<<c<<"/"<<graph.vertices.size() - 1<<endl;
@@ -205,13 +250,13 @@ int main()
 	graph.GridsGen(100);
 	//cout << sizeof(int) << endl;
 	//cout << graph.bound_north << " " << graph.bound_south << " " << graph.bound_east;
-	graph.SortDegrees();
-	Parallel_Test(graph);
+	//graph.SortDegrees();
+	//Parallel_Test(graph);
 
 	//Distance_Test(graph);
 	//representiveNumCompareKmeans(graph);
 
-	//representiveNumCompareGrids(graph);
+	representiveNumCompareDegree(graph);
 	/*int rpsnum;//代表元生成测试
 	double rpstime;
 	for (int i = 0; i < 12; i++)

@@ -644,6 +644,7 @@ void Graph::Chose_moveobj(int rate)
 	 double secondsPerTick;
 	 QueryPerformanceFrequency(&lv);
 	 secondsPerTick = 1000000.0 / lv.QuadPart;*/
+	 omp_set_num_threads(2);
 #pragma omp parallel for
 	 for (int i = 0; i < n; i++)
 	 {
@@ -919,8 +920,6 @@ void Graph::Chose_moveobj(int rate)
 
  void Graph::RepresentativeDegree()
  {
-	 int *randnodes = new int[vertices.size()];
-	 RandomSerices(randnodes, vertices.size());
 	 //for (int i = 0; i < 100; i++)
 	 //	printf("%d ", randnodes[i]);
 	 //printf("%d \n", 0x7f);
@@ -929,6 +928,7 @@ void Graph::Chose_moveobj(int rate)
 	 //rpsent.clear();
 	 vector<int>().swap(rpsent);
 	 rpsent.resize(vertices.size());
+	 SortDegrees();
 	// SortDegrees();
 	 int *label = new int[this->vertices.size()];
 	 for (int i = 0; i < vertices.size(); i++)
@@ -971,7 +971,6 @@ void Graph::Chose_moveobj(int rate)
 		 }
 	 }
 	 //cout << "rpschose" << endl;
-	 delete(randnodes);
 	 delete(label);
  }
 
@@ -1113,20 +1112,16 @@ void Graph::Chose_moveobj(int rate)
 		 int *label = new int[n];
 		 int *label1 = new int[n];
 		 int *path = new int[n];
-		 cout <<"s:"<< randnum << endl;
+		// cout <<"s:"<< randnum << endl;
 		 Dijkstra_ALL(randnum, label, path);
 		 Comput_Dist_by_Rps(randnum, label1);
 		 unsigned int dismax = 0, dismin = 10000000000, disbar = 0;
-		 for (int i = 1; i < 100; i++)
-			 cout << label[i] << " " << label1[i] << endl;
 		 for (int i = 1; i < n; i++)
 		 {
 			 if (i != randnum)
 			 {
 
 				 unsigned int tmp = abs(label1[i] - label[i]);
-				 if (tmp == 0)
-					 cout << i << endl;
 				 if (dismax < tmp)
 					 dismax = tmp;
 				 if (dismin>tmp)
